@@ -41,11 +41,11 @@ router.post('/signin', async (req, res) => {
 
 router.post('/signup', (req, res) => {
     try {
-        const { email, password } = req.body.data;
+        const { email, password, sex, fullName, yearOfBirth } = req.body.data;
     
         bcrypt.genSalt(10, function(err, salt) {
             bcrypt.hash(password, salt, async function(err, hash) {
-                const user = new User({ email, password: hash });
+                const user = new User({ email, password: hash, sex, fullName, yearOfBirth });
                 await user.save();
                 const session = await createSession(user._id);
                 res.json({ success: true, data: { id: user._id, email: user.email, time: session.time, hash: session.hash }, err: null })

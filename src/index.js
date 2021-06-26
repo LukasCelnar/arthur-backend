@@ -1,5 +1,6 @@
 require('./models/User');
 require('./models/Session');
+require('./models/Objects');
 
 const express = require('express');
 const mongoose = require('mongoose');

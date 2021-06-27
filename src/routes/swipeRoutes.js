@@ -18,28 +18,39 @@ router.post('/create-swipes', async (req, res) => {
 })
 
 router.post('/create-match', async (req, res) => {
-    try {
-        const id = req.body.id
-        const mySwipes = req.body.swipes;
 
-        const matchesCounts = [];
+    try {
+        const swipesData = req.body.swipes;
+
+        const myNewSwipes = new Swipes({ swipes: swipesData })
+        const _id = myNewSwipes._id
+        // await mySwipes.save()
+
+        let biggestCount = {_id: '', count: -1};
 
         const allSwipes = await Swipes.find({});
         allSwipes.map(user => {
-            let mahtchesCount = 0;
+            let matchesCount = 0;
             const userSwipes = user.swipes;
-            mySwipes.map((result, i) => {
+            swipesData.map((result, i) => {
                 if (result === userSwipes[i]) {
-                    mahtchesCount++
+                    matchesCount = matchesCount + 1
                 }
             })
-            matchesCounts.push({ id: user._id, count: matchesCount })
+
+            //console.log(matchesCount)
+
+            if (biggestCount.count < matchesCount) {
+                biggestCount = { _id: user._id, count: matchesCount }
+            }
         });
 
-        console.log(matchesCounts)
-        res.json({ success: true, matchId: '', err: null })
-    } catch(err) {
-        res.json({ success: false, err: 'error' })
+        await myNewSwipes.save();
+
+        res.json({ success: true, matchId: biggestCount._id, countValue: biggestCount.count, err: null })
+    } catch (err) {
+        console.log(err)
+        res.json({ success: false, data: {}, err: 'error' })
     }
 })
 
